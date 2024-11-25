@@ -2,10 +2,10 @@
 
 import Image from "next/image";
 import { Barbershop } from "@prisma/client";
+import { useRouter } from "next/navigation";
 import { ChevronLeftIcon, MapPin, MenuIcon, StarIcon } from "lucide-react";
 
 import { Button } from "@/app/_components/ui/button";
-import { useRouter } from "next/navigation";
 
 interface BarbershopInfoProps {
   barbershop: Barbershop;
