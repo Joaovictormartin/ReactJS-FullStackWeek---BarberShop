@@ -5,7 +5,9 @@ import { Barbershop } from "@prisma/client";
 import { useRouter } from "next/navigation";
 import { ChevronLeftIcon, MapPin, MenuIcon, StarIcon } from "lucide-react";
 
+import SideMenu from "@/app/_components/side-menu";
 import { Button } from "@/app/_components/ui/button";
+import { Sheet, SheetTrigger } from "@/app/_components/ui/sheet";
 
 interface BarbershopInfoProps {
   barbershop: Barbershop;
@@ -18,19 +20,29 @@ const BarbershopInfo = ({ barbershop }: BarbershopInfoProps) => {
 
   return (
     <div>
-      <div className="w-full h-[250px] relative">
+      <div className="relative h-[250px] w-full">
         <Button
           size={"icon"}
           variant={"outline"}
           onClick={handleBackClick}
-          className="z-50 top-4 left-4 absolute"
+          className="absolute left-4 top-4 z-50"
         >
           <ChevronLeftIcon />
         </Button>
 
-        <Button size={"icon"} variant={"outline"} className="z-50 top-4 right-4 absolute">
-          <MenuIcon />
-        </Button>
+        <Sheet>
+          <SheetTrigger asChild>
+            <Button
+              size={"icon"}
+              variant={"outline"}
+              className="absolute right-4 top-4 z-50"
+            >
+              <MenuIcon />
+            </Button>
+          </SheetTrigger>
+
+          <SideMenu />
+        </Sheet>
 
         <Image
           fill
@@ -41,13 +53,13 @@ const BarbershopInfo = ({ barbershop }: BarbershopInfoProps) => {
         />
       </div>
 
-      <div className="px-5 pt-3 pb-6 border-b border-solid border-secondary space-y-1 ">
+      <div className="space-y-1 border-b border-solid border-secondary px-5 pb-6 pt-3">
         <h1 className="text-xl font-bold">{barbershop.name}</h1>
-        <div className="flex item-center gap-1">
+        <div className="item-center flex gap-1">
           <MapPin className="stroke-primary" size={18} />
           <p className="text-sm">{barbershop.address}</p>
         </div>
-        <div className="flex item-center gap-1">
+        <div className="item-center flex gap-1">
           <StarIcon className="stroke-primary" size={18} />
           <p className="text-sm">5,0 (889 avaliações)</p>
         </div>
