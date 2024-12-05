@@ -1,9 +1,11 @@
 "use client";
 
+import { toast } from "sonner";
 import Image from "next/image";
 import { Loader2 } from "lucide-react";
 import { ptBR } from "date-fns/locale";
 import { useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 import { signIn, useSession } from "next-auth/react";
 import { Barbershop, Service } from "@prisma/client";
 import { format, setHours, setMinutes } from "date-fns";
@@ -33,17 +35,16 @@ const ServiceItem = ({
   barbershop,
   isAuthenticated,
 }: ServiceItemProps) => {
+  const router = useRouter();
   const { data } = useSession();
 
+  const [sheetIsOpen, setSheetIsOpen] = useState(false);
   const [hour, setHour] = useState<string | undefined>();
   const [date, setDate] = useState<Date | undefined>(undefined);
   const [submitIsLoading, setSubmitIsLoading] = useState(false);
 
   const handleBookingClick = () => {
-    if (!isAuthenticated) {
-      return signIn("google");
-    } else {
-    }
+    if (!isAuthenticated) return signIn("google");
   };
 
   const handleDateClick = (date: Date | undefined) => {
@@ -69,6 +70,20 @@ const ServiceItem = ({
         serviceId: service.id,
         barbershopId: barbershop.id,
         userId: (data?.user as any).id,
+      });
+
+      setHour(undefined);
+      setDate(undefined);
+      setSheetIsOpen(false);
+
+      toast("Reserva realizada com sucesso!", {
+        description: format(newDate, "'Para' dd 'de' MMMM 'às' HH':'mm", {
+          locale: ptBR,
+        }),
+        action: {
+          label: "Visualizar",
+          onClick: () => router.push("/bookings"),
+        },
       });
     } catch (error) {
       console.log(error);
@@ -106,7 +121,7 @@ const ServiceItem = ({
                 }).format(Number(service.price))}
               </p>
 
-              <Sheet>
+              <Sheet open={sheetIsOpen} onOpenChange={setSheetIsOpen}>
                 <SheetTrigger>
                   <Button variant={"secondary"} onClick={handleBookingClick}>
                     Reservar
