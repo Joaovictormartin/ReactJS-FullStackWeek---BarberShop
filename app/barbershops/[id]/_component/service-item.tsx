@@ -1,14 +1,14 @@
 "use client";
 
+import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import Image from "next/image";
 import { Loader2 } from "lucide-react";
 import { ptBR } from "date-fns/locale";
-import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { signIn, useSession } from "next-auth/react";
-import { Barbershop, Service } from "@prisma/client";
 import { format, setHours, setMinutes } from "date-fns";
+import { Barbershop, Booking, Service } from "@prisma/client";
 
 import {
   Sheet,
@@ -23,6 +23,7 @@ import { Calendar } from "@/app/_components/ui/calendar";
 import { Card, CardContent } from "@/app/_components/ui/card";
 import { saveBooking } from "@/app/barbershops/[id]/_actions/save-booking";
 import { generateDayTimeList } from "@/app/barbershops/[id]/_helpes/hours";
+import { getDayBookings } from "@/app/barbershops/[id]/_actions/get-day-bookings";
 
 interface ServiceItemProps {
   barbershop: Barbershop;
@@ -40,6 +41,7 @@ const ServiceItem = ({
 
   const [sheetIsOpen, setSheetIsOpen] = useState(false);
   const [hour, setHour] = useState<string | undefined>();
+  const [dayBookings, setDayBookings] = useState<Booking[]>([]);
   const [date, setDate] = useState<Date | undefined>(undefined);
   const [submitIsLoading, setSubmitIsLoading] = useState(false);
 
@@ -93,7 +95,37 @@ const ServiceItem = ({
   };
 
   const timeList = useMemo(() => {
-    return date ? generateDayTimeList(date) : [];
+    if (!date) return [];
+
+    return generateDayTimeList(date).filter((time) => {
+      const timeHour = Number(time.split(":")[0]);
+      const timeMinutes = Number(time.split(":")[1]);
+
+      const booking = dayBookings.find((booking) => {
+        const bookingHour = booking.date.getHours();
+        const bookingMinutes = booking.date.getMinutes();
+
+        return bookingHour === timeHour && bookingMinutes === timeMinutes;
+      });
+
+      if (!booking) return true;
+
+      return false;
+    });
+  }, [date, dayBookings]);
+
+  useEffect(() => {
+    if (!date) return;
+    const refreshAvailableHours = async () => {
+      try {
+        const dayBookings = await getDayBookings(date);
+        setDayBookings(dayBookings);
+      } catch (error) {
+        console.error("Failed to refresh available hours:", error);
+      }
+    };
+
+    refreshAvailableHours();
   }, [date]);
 
   return (
