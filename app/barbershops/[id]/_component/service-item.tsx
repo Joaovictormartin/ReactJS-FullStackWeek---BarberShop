@@ -118,7 +118,7 @@ const ServiceItem = ({
     if (!date) return;
     const refreshAvailableHours = async () => {
       try {
-        const dayBookings = await getDayBookings(date);
+        const dayBookings = await getDayBookings(barbershop.id, date);
         setDayBookings(dayBookings);
       } catch (error) {
         console.error("Failed to refresh available hours:", error);
@@ -126,7 +126,7 @@ const ServiceItem = ({
     };
 
     refreshAvailableHours();
-  }, [date]);
+  }, [date, barbershop.id]);
 
   return (
     <Card>
