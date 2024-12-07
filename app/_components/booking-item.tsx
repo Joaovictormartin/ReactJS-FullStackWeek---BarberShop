@@ -18,7 +18,7 @@ const BookingItem = ({ bookings }: BookingItemProps) => {
   const statusBookgin = isBookingConfirmed ? "Confirmado" : "Finalizado";
 
   return (
-    <Card>
+    <Card className="min-w-full">
       <CardContent className="flex px-0 py-0">
         <div className="flex flex-[3] flex-col gap-2 p-5">
           <Badge variant={variantBadge}>{statusBookgin}</Badge>
