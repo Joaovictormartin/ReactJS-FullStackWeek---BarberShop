@@ -243,7 +243,9 @@ const ServiceItem = ({
                       onClick={handleBookingSubmit}
                       disabled={!date || !hour || submitIsLoading}
                     >
-                      {submitIsLoading && <Loader2 className="animate-spin" />}
+                      {submitIsLoading && (
+                        <Loader2 className="mr-2 size-4 animate-spin" />
+                      )}
                       Confirmar reserva
                     </Button>
                   </SheetFooter>
