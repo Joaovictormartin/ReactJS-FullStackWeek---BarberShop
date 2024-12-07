@@ -18,6 +18,17 @@ import {
   SheetFooter,
   SheetClose,
 } from "@/app/_components/ui/sheet";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/app/_components/ui/alert-dialog";
 import { Badge } from "@/app/_components/ui/badge";
 import { Button } from "@/app/_components/ui/button";
 import { Card, CardContent } from "@/app/_components/ui/card";
@@ -43,7 +54,7 @@ const BookingItem = ({ bookings }: BookingItemProps) => {
     try {
       await cancelBooking(bookings.id);
 
-      toast.success("Reserva cancelado com sucesso!");
+      toast.success("Reserva cancelada com sucesso!");
     } catch (error) {
       console.error("Failed to cancel booking:", error);
     } finally {
@@ -154,17 +165,41 @@ const BookingItem = ({ bookings }: BookingItemProps) => {
               </Button>
             </SheetClose>
 
-            <Button
-              className="w-full"
-              variant={"destructive"}
-              onClick={handleCancelBooking}
-              disabled={!isBookingConfirmed || isDeleteLoading}
-            >
-              {isDeleteLoading && (
-                <Loader2 className="mr-2 size-4 animate-spin" />
-              )}
-              Cancelar Reserva
-            </Button>
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button
+                  className="w-full"
+                  variant={"destructive"}
+                  disabled={!isBookingConfirmed || isDeleteLoading}
+                >
+                  Cancelar Reserva
+                </Button>
+              </AlertDialogTrigger>
+
+              <AlertDialogContent className="w-[90%]">
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Cancelar Reserva</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    Tem certeza que deseja cancelar esse agendamento?
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter className="flex-row gap-3">
+                  <AlertDialogCancel className="mt-0 w-full">
+                    Voltar
+                  </AlertDialogCancel>
+                  <AlertDialogAction
+                    className="w-full"
+                    disabled={isDeleteLoading}
+                    onClick={handleCancelBooking}
+                  >
+                    {isDeleteLoading && (
+                      <Loader2 className="mr-2 size-4 animate-spin" />
+                    )}
+                    Confirmar
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
           </SheetFooter>
         </div>
       </SheetContent>
