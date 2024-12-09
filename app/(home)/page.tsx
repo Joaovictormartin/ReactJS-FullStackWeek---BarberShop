@@ -4,9 +4,9 @@ import { getServerSession } from "next-auth";
 
 import { db } from "@/app/_lib/prisma";
 import Header from "../_components/header";
+import { authOptions } from "@/app/_lib/auth";
 import Search from "@/app/(home)/_components/search";
 import BookingItem from "@/app/_components/booking-item";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import BarberShopItem from "@/app/(home)/_components/barbershop-item";
 
 export default async function Home() {
