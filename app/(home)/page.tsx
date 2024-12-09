@@ -1,5 +1,5 @@
 import { format } from "date-fns";
-import { ptBR } from "date-fns/locale";
+import { ptBR, se } from "date-fns/locale";
 import { getServerSession } from "next-auth";
 
 import { db } from "@/app/_lib/prisma";
@@ -30,7 +30,9 @@ export default async function Home() {
       <Header />
 
       <div className="px-5 pt-5">
-        <h2 className="text-xl font-bold">Olá, Miguel</h2>
+        <h2 className="text-xl font-bold">
+          {session?.user && `Olá, ${session?.user.name?.split(" ")[0]}`}
+        </h2>
         <p className="text-sm capitalize">
           {format(new Date(), "EEEE',' dd 'de' MMMM", { locale: ptBR })}
         </p>
