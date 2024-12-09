@@ -7,8 +7,8 @@ import { Loader2 } from "lucide-react";
 import { ptBR } from "date-fns/locale";
 import { useRouter } from "next/navigation";
 import { signIn, useSession } from "next-auth/react";
-import { format, setHours, setMinutes } from "date-fns";
 import { Barbershop, Booking, Service } from "@prisma/client";
+import { addDays, format, setHours, setMinutes } from "date-fns";
 
 import {
   Sheet,
@@ -170,8 +170,8 @@ const ServiceItem = ({
                       mode="single"
                       locale={ptBR}
                       selected={date}
-                      fromDate={new Date()}
                       onSelect={handleDateClick}
+                      fromDate={addDays(new Date(), 1)}
                       styles={{
                         cell: { width: "100%" },
                         button: { width: "100%" },
