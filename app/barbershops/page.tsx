@@ -1,12 +1,17 @@
 import { db } from "@/app/_lib/prisma";
+import { redirect } from "next/navigation";
+
 import Header from "@/app/_components/header";
-import BarberShopItem from "../(home)/_components/barbershop-item";
+import Search from "@/app/(home)/_components/search";
+import BarberShopItem from "@/app/(home)/_components/barbershop-item";
 
 interface BarberShopsPageProps {
   searchParams: { search?: string };
 }
 
 const BarberShopsPage = async ({ searchParams }: BarberShopsPageProps) => {
+  if (!searchParams.search) redirect("/");
+
   const barbershops = await db.barbershop.findMany({
     where: {
       name: {
@@ -21,7 +26,9 @@ const BarberShopsPage = async ({ searchParams }: BarberShopsPageProps) => {
       <Header />
 
       <div className="px-5 py-6">
-        <h1 className="text-xs font-bold uppercase text-gray-400">
+        <Search defaultValues={{ search: searchParams.search }} />
+
+        <h1 className="mt-5 text-xs font-bold uppercase text-gray-400">
           Resultados para "{searchParams.search}"
         </h1>
 

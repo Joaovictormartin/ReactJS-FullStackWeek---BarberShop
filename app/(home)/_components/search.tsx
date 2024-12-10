@@ -11,23 +11,24 @@ import {
   FormItem,
   FormField,
   FormControl,
-  FormMessage,
 } from "@/app/_components/ui/form";
 import { Input } from "@/app/_components/ui/input";
 import { Button } from "@/app/_components/ui/button";
 
+interface SearchProps {
+  defaultValues?: z.infer<typeof formSchema>;
+}
+
 const formSchema = z.object({
-  search: z.string({ required_error: "Campo obrigatório" }).trim().min(1),
+  search: z.string().trim().min(1),
 });
 
-const Search = () => {
+const Search = ({ defaultValues }: SearchProps) => {
   const router = useRouter();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      search: "",
-    },
+    defaultValues,
   });
 
   function handleSubmit(values: z.infer<typeof formSchema>) {
@@ -48,7 +49,6 @@ const Search = () => {
               <FormControl>
                 <Input placeholder="Busque por uma barbearia" {...field} />
               </FormControl>
-              <FormMessage />
             </FormItem>
           )}
         />
