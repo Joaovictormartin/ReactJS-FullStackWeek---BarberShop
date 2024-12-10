@@ -19,11 +19,14 @@ const BarberShopItem = ({ barbershop }: BarberShopItemProps) => {
   const handleBookingClick = () => route.push(`/barbershops/${barbershop.id}`);
 
   return (
-    <Card className="min-w-[167px] max-w-[167px] rounded-2xl">
+    <Card className="min-w-full max-w-full rounded-2xl">
       <CardContent className="px-1 py-0">
-        <div className=" relative h-[159px] w-full mt-1">
-          <div className="absolute top-2 left-2 z-50">
-            <Badge variant={"secondary"} className="opacity-90 flex items-center gap-1">
+        <div className="relative mt-1 h-[159px] w-full">
+          <div className="absolute left-2 top-2 z-50">
+            <Badge
+              variant={"secondary"}
+              className="flex items-center gap-1 opacity-90"
+            >
               <StarIcon size={12} className="fill-primary text-primary" />
               <span className="text-xs">5,0</span>
             </Badge>
@@ -42,15 +45,19 @@ const BarberShopItem = ({ barbershop }: BarberShopItemProps) => {
         </div>
 
         <div className="px-2 pb-3">
-          <h2 className="font-bold mt-2 overflow-hidden text-ellipsis text-nowrap">
+          <h2 className="mt-2 overflow-hidden text-ellipsis text-nowrap font-bold">
             {barbershop.name}
           </h2>
 
-          <p className="text-sm text-gray-400 overflow-hidden text-ellipsis text-nowrap">
+          <p className="overflow-hidden text-ellipsis text-nowrap text-sm text-gray-400">
             {barbershop.address}
           </p>
 
-          <Button variant={"secondary"} className="w-full mt-3" onClick={handleBookingClick}>
+          <Button
+            variant={"secondary"}
+            className="mt-3 w-full"
+            onClick={handleBookingClick}
+          >
             Reservar
           </Button>
         </div>
