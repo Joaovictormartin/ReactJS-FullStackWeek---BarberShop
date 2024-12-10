@@ -31,6 +31,7 @@ import {
 } from "@/app/_components/ui/alert-dialog";
 import { Badge } from "@/app/_components/ui/badge";
 import { Button } from "@/app/_components/ui/button";
+import BookingInfo from "@/app/_components/booking-info";
 import { Card, CardContent } from "@/app/_components/ui/card";
 import { cancelBooking } from "@/app/_actions/cancel-bookgin";
 import { Avatar, AvatarImage, AvatarFallback } from "./ui/avatar";
@@ -127,36 +128,7 @@ const BookingItem = ({ bookings }: BookingItemProps) => {
             {statusBookgin}
           </Badge>
 
-          <Card>
-            <CardContent className="flex flex-col gap-3 p-3">
-              <div className="flex items-center justify-between">
-                <h2 className="font-bold">{bookings.service.name}</h2>
-                <h3 className="text-sm font-bold">
-                  {Intl.NumberFormat("pt-BR", {
-                    style: "currency",
-                    currency: "BRL",
-                  }).format(Number(bookings.service.price))}
-                </h3>
-              </div>
-
-              <div className="flex items-center justify-between">
-                <h3 className="text-sm text-gray-400">Data</h3>
-                <h4 className="text-sm">
-                  {format(bookings.date, "dd 'de' MMMM", { locale: ptBR })}
-                </h4>
-              </div>
-
-              <div className="flex items-center justify-between">
-                <h3 className="text-sm text-gray-400">Horário</h3>
-                <h4 className="text-sm">{format(bookings.date, "HH:mm")}</h4>
-              </div>
-
-              <div className="flex items-center justify-between">
-                <h3 className="text-sm text-gray-400">Barbearia</h3>
-                <h4 className="text-sm">{bookings.barbershop.name}</h4>
-              </div>
-            </CardContent>
-          </Card>
+          <BookingInfo booking={bookings} />
 
           <SheetFooter className="mt-3 flex flex-row gap-3">
             <SheetClose asChild>

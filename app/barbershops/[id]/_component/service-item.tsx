@@ -24,6 +24,7 @@ import { Card, CardContent } from "@/app/_components/ui/card";
 import { saveBooking } from "@/app/barbershops/[id]/_actions/save-booking";
 import { generateDayTimeList } from "@/app/barbershops/[id]/_helpes/hours";
 import { getDayBookings } from "@/app/barbershops/[id]/_actions/get-day-bookings";
+import BookingInfo from "@/app/_components/booking-info";
 
 interface ServiceItemProps {
   barbershop: Barbershop;
@@ -201,41 +202,20 @@ const ServiceItem = ({
                     </div>
                   )}
 
-                  <div className="bot border-t border-solid border-secondary px-5 py-6">
-                    <Card>
-                      <CardContent className="flex flex-col gap-3 p-3">
-                        <div className="flex items-center justify-between">
-                          <h2 className="font-bold">{service.name}</h2>
-                          <h3 className="text-sm font-bold">
-                            {Intl.NumberFormat("pt-BR", {
-                              style: "currency",
-                              currency: "BRL",
-                            }).format(Number(service.price))}
-                          </h3>
-                        </div>
-
-                        {date && (
-                          <div className="flex items-center justify-between">
-                            <h3 className="text-sm text-gray-400">Data</h3>
-                            <h4 className="text-sm">
-                              {format(date, "dd 'de' MMMM", { locale: ptBR })}
-                            </h4>
-                          </div>
-                        )}
-
-                        {hour && (
-                          <div className="flex items-center justify-between">
-                            <h3 className="text-sm text-gray-400">Horário</h3>
-                            <h4 className="text-sm">{hour}</h4>
-                          </div>
-                        )}
-
-                        <div className="flex items-center justify-between">
-                          <h3 className="text-sm text-gray-400">Barbearia</h3>
-                          <h4 className="text-sm">{barbershop.name}</h4>
-                        </div>
-                      </CardContent>
-                    </Card>
+                  <div className="px-5">
+                    <BookingInfo
+                      booking={{
+                        barbershop,
+                        service,
+                        date:
+                          date && hour
+                            ? setMinutes(
+                                setHours(date, Number(hour?.split(":")[0])),
+                                Number(hour?.split(":")[1]),
+                              )
+                            : undefined,
+                      }}
+                    />
                   </div>
 
                   <SheetFooter className="px-5">
