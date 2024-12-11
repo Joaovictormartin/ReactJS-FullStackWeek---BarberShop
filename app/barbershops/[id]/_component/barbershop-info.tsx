@@ -47,22 +47,28 @@ const BarbershopInfo = ({ barbershop }: BarbershopInfoProps) => {
         <Image
           fill
           alt={barbershop.name}
+          className="opacity-75"
           src={barbershop.imageUrl}
           style={{ objectFit: "cover" }}
-          className="opacity-75"
         />
       </div>
 
       <div className="space-y-1 border-b border-solid border-secondary px-5 pb-6 pt-3">
         <h1 className="text-xl font-bold">{barbershop.name}</h1>
-        <div className="item-center flex gap-1">
+        <div className="item-center flex gap-2">
           <MapPin className="stroke-primary" size={18} />
           <p className="text-sm">{barbershop.address}</p>
         </div>
-        <div className="item-center flex gap-1">
+        <div className="item-center flex gap-2">
           <StarIcon className="stroke-primary" size={18} />
           <p className="text-sm">5,0 (889 avaliações)</p>
         </div>
+      </div>
+
+      <div className="space-y-3 border-b border-solid border-secondary p-5">
+        <h2 className="text-xs font-bold uppercase text-gray-400">Sobre nós</h2>
+
+        <p className="text-sm">{barbershop.description}</p>
       </div>
     </div>
   );

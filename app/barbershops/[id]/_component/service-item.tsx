@@ -7,8 +7,8 @@ import { Loader2 } from "lucide-react";
 import { ptBR } from "date-fns/locale";
 import { useRouter } from "next/navigation";
 import { signIn, useSession } from "next-auth/react";
-import { Barbershop, Booking, Service } from "@prisma/client";
 import { addDays, format, setHours, setMinutes } from "date-fns";
+import { Barbershop, BarbershopService, Booking } from "@prisma/client";
 
 import {
   Sheet,
@@ -28,7 +28,7 @@ import BookingInfo from "@/app/_components/booking-info";
 
 interface ServiceItemProps {
   barbershop: Barbershop;
-  service: Service;
+  service: BarbershopService;
   isAuthenticated?: boolean;
 }
 
