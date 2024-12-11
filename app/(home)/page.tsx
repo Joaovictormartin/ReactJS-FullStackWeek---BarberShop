@@ -1,11 +1,16 @@
+import Image from "next/image";
 import { format } from "date-fns";
-import { ptBR, se } from "date-fns/locale";
+import { ptBR } from "date-fns/locale";
 import { getServerSession } from "next-auth";
 
-import { db } from "@/app/_lib/prisma";
+import {
+  getBarbershop,
+  getBarbershopOrderById,
+} from "@/app/_actions/get-barbershop";
 import Header from "../_components/header";
 import { authOptions } from "@/app/_lib/auth";
 import Search from "@/app/(home)/_components/search";
+import { getBookgin } from "@/app/_actions/get-bookgin";
 import BookingItem from "@/app/_components/booking-item";
 import BarberShopItem from "@/app/(home)/_components/barbershop-item";
 
@@ -14,21 +19,13 @@ export default async function Home() {
 
   const [barbershops, recommendedBarbershops, confirmedBookings] =
     await Promise.all([
-      db.barbershop.findMany(),
-      db.barbershop.findMany({ orderBy: { id: "asc" } }),
-      session?.user
-        ? await db.booking.findMany({
-            where: {
-              userId: (session?.user as any).id,
-              date: { gte: new Date() },
-            },
-            include: { service: true, barbershop: true },
-          })
-        : Promise.resolve([]),
+      getBarbershop(),
+      getBarbershopOrderById("asc"),
+      getBookgin(),
     ]);
 
   return (
-    <div className="">
+    <div>
       <Header />
 
       <div className="px-5 pt-5">
@@ -42,6 +39,14 @@ export default async function Home() {
 
       <div className="mt-6 px-5">
         <Search />
+        <div className="relative mt-6 h-[150px] w-full px-5">
+          <Image
+            fill
+            src="/BannerHome.png"
+            className="rounded-xl object-cover"
+            alt="Agende nos melhores com FSW Barber"
+          />
+        </div>
       </div>
 
       <div className="mt-6">
