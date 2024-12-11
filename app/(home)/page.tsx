@@ -39,6 +39,7 @@ export default async function Home() {
 
       <div className="mt-6 px-5">
         <Search />
+
         <div className="relative mt-6 h-[150px] w-full px-5">
           <Image
             fill
