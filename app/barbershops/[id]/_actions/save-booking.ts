@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 
-import { db } from "@/app/_lib/prisma";
+import { db } from "@/_lib/prisma";
 
 interface SaveBookingProps {
   barbershopId: string;
