@@ -1,21 +1,17 @@
 "use client";
 
 import { z } from "zod";
+import Link from "next/link";
 import Image from "next/image";
 import { SearchIcon } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import {
-  Form,
-  FormItem,
-  FormField,
-  FormControl,
-} from "@/app/_components/ui/form";
-import { Input } from "@/app/_components/ui/input";
-import { Button } from "@/app/_components/ui/button";
-import { quickSearchOptions } from "@/app/_constants/search";
+import { Input } from "@/_components/ui/input";
+import { Button } from "@/_components/ui/button";
+import { quickSearchOptions } from "@/_constants/search";
+import { Form, FormItem, FormField, FormControl } from "@/_components/ui/form";
 
 interface SearchProps {
   defaultValues?: z.infer<typeof formSchema>;
@@ -34,7 +30,7 @@ const Search = ({ defaultValues }: SearchProps) => {
   });
 
   function handleSubmit(values: z.infer<typeof formSchema>) {
-    router.push(`/barbershops?search=${values.search}`);
+    router.push(`/barbershops?search=${values.search.toLowerCase()}`);
   }
 
   return (
@@ -64,14 +60,21 @@ const Search = ({ defaultValues }: SearchProps) => {
 
       <div className="flex gap-3 overflow-x-auto [&::-webkit-scrollbar]:hidden">
         {quickSearchOptions.map((option) => (
-          <Button key={option.title} variant={"secondary"}>
-            <Image
-              width={16}
-              height={16}
-              alt={option.title}
-              src={option.imageUrl}
-            />
-            {option.title}
+          <Button
+            asChild
+            className="gap-2"
+            key={option.title}
+            variant="secondary"
+          >
+            <Link href={`/barbershops?service=${option.title.toLowerCase()}`}>
+              <Image
+                width={16}
+                height={16}
+                alt={option.title}
+                src={option.imageUrl}
+              />
+              {option.title}
+            </Link>
           </Button>
         ))}
       </div>
