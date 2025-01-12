@@ -3,7 +3,7 @@
 import { toast } from "sonner";
 
 import { SmartphoneIcon } from "lucide-react";
-import { Button } from "@/app/_components/ui/button";
+import { Button } from "@/_components/ui/button";
 
 interface PhoneItemProps {
   phone: string;

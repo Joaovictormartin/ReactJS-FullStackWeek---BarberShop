@@ -3,7 +3,7 @@ import { Adapter } from "next-auth/adapters";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import GoogleProvider from "next-auth/providers/google";
 
-import { db } from "@/app/_lib/prisma";
+import { db } from "@/_lib/prisma";
 
 interface User {
   id: string;
