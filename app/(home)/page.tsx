@@ -6,22 +6,22 @@ import { getServerSession } from "next-auth";
 import {
   getBarbershop,
   getBarbershopOrderById,
-} from "@/app/_actions/get-barbershop";
+} from "@/_actions/get-barbershop";
 import Header from "../_components/header";
-import { authOptions } from "@/app/_lib/auth";
-import Search from "@/app/(home)/_components/search";
-import { getBookgin } from "@/app/_actions/get-bookgin";
-import BookingItem from "@/app/_components/booking-item";
-import BarberShopItem from "@/app/(home)/_components/barbershop-item";
+import { authOptions } from "@/_lib/auth";
+import Search from "@/(home)/_components/search";
+import BookingItem from "@/_components/booking-item";
+import BarberShopItem from "@/(home)/_components/barbershop-item";
+import { getConfirmedBookings } from "@/_actions/get-confirmed-bookings";
 
 export default async function Home() {
   const session = await getServerSession(authOptions);
 
-  const [barbershops, recommendedBarbershops, confirmedBookings] =
+  const [barbershops, confirmedBookings, recommendedBarbershops] =
     await Promise.all([
       getBarbershop(),
+      getConfirmedBookings(),
       getBarbershopOrderById("asc"),
-      getBookgin(),
     ]);
 
   return (
@@ -29,7 +29,7 @@ export default async function Home() {
       <Header />
 
       <div className="px-5 pt-5">
-        <h2 className="text-xl font-bold">
+        <h2 className="text-xl font-bold capitalize">
           {session?.user && `Olá, ${session?.user.name?.split(" ")[0]}`}
         </h2>
         <p className="text-sm capitalize">
@@ -59,7 +59,10 @@ export default async function Home() {
 
             <div className="flex gap-3 overflow-x-auto px-5 [&::-webkit-scrollbar]:hidden">
               {confirmedBookings.map((booking) => (
-                <BookingItem key={booking.id} bookings={booking} />
+                <BookingItem
+                  key={booking.id}
+                  booking={JSON.parse(JSON.stringify(booking))}
+                />
               ))}
             </div>
           </>
