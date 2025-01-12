@@ -5,9 +5,9 @@ import { StarIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { Barbershop } from "@prisma/client";
 
-import { Badge } from "@/app/_components/ui/badge";
-import { Button } from "@/app/_components/ui/button";
-import { Card, CardContent } from "@/app/_components/ui/card";
+import { Badge } from "@/_components/ui/badge";
+import { Button } from "@/_components/ui/button";
+import { Card, CardContent } from "@/_components/ui/card";
 
 interface BarberShopItemProps {
   barbershop: Barbershop;
