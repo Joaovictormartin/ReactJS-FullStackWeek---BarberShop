@@ -2,7 +2,7 @@ import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { Barbershop, Booking, Service } from "@prisma/client";
 
-import { Card, CardContent } from "@/app/_components/ui/card";
+import { Card, CardContent } from "@/_components/ui/card";
 
 interface BookingInfoProps {
   booking: Partial<Pick<Booking, "date">> & {
