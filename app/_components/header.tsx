@@ -3,11 +3,11 @@
 import Link from "next/link";
 import Image from "next/image";
 import { MenuIcon } from "lucide-react";
-import { Sheet, SheetTrigger } from "@/app/_components/ui/sheet";
+import { Sheet, SheetTrigger } from "@/_components/ui/sheet";
 
-import SideMenu from "@/app/_components/side-menu";
-import { Button } from "@/app/_components/ui/button";
-import { Card, CardContent } from "@/app/_components/ui/card";
+import SideMenu from "@/_components/side-menu";
+import { Button } from "@/_components/ui/button";
+import { Card, CardContent } from "@/_components/ui/card";
 
 const Header = () => {
   return (
