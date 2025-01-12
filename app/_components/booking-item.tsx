@@ -1,179 +1,198 @@
 "use client";
 
-import { useState } from "react";
-
-import Image from "next/image";
 import { toast } from "sonner";
+import Image from "next/image";
+import { useState } from "react";
 import { ptBR } from "date-fns/locale";
-import { Loader2 } from "lucide-react";
 import { Prisma } from "@prisma/client";
 import { format, isFuture } from "date-fns";
 
 import {
   Sheet,
-  SheetTitle,
-  SheetHeader,
-  SheetContent,
-  SheetTrigger,
-  SheetFooter,
   SheetClose,
-} from "@/app/_components/ui/sheet";
+  SheetContent,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/_components/ui/sheet";
 import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/app/_components/ui/alert-dialog";
-import { Badge } from "@/app/_components/ui/badge";
-import { Button } from "@/app/_components/ui/button";
-import BookingInfo from "@/app/_components/booking-info";
-import { Card, CardContent } from "@/app/_components/ui/card";
-import { cancelBooking } from "@/app/_actions/cancel-bookgin";
-import { Avatar, AvatarImage, AvatarFallback } from "./ui/avatar";
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogClose,
+} from "@/_components/ui/dialog";
+import { Badge } from "@/_components/ui/badge";
+import { Button } from "@/_components/ui/button";
+import PhoneItem from "@/_components/phone-item";
+import { Card, CardContent } from "@/_components/ui/card";
+import { deleteBooking } from "@/_actions/delete-booking";
+import BookingSummary from "@/_components/booking-summary";
+import { Avatar, AvatarImage } from "@/_components/ui/avatar";
 
 interface BookingItemProps {
-  bookings: Prisma.BookingGetPayload<{
-    include: { service: true; barbershop: true };
+  booking: Prisma.BookingGetPayload<{
+    include: {
+      service: {
+        include: {
+          barbershop: true;
+        };
+      };
+    };
   }>;
 }
 
-const BookingItem = ({ bookings }: BookingItemProps) => {
-  const [isDeleteLoading, setIsDeleteLoading] = useState(false);
+const BookingItem = ({ booking }: BookingItemProps) => {
+  const isConfirmed = isFuture(booking.date);
 
-  const isBookingConfirmed = isFuture(bookings.date);
-  const variantBadge = isBookingConfirmed ? "default" : "secondary";
-  const statusBookgin = isBookingConfirmed ? "Confirmado" : "Finalizado";
+  const [isSheetOpen, setIsSheetOpen] = useState(false);
 
   const handleCancelBooking = async () => {
-    setIsDeleteLoading(true);
-
     try {
-      await cancelBooking(bookings.id);
-
+      await deleteBooking(booking.id);
+      setIsSheetOpen(false);
       toast.success("Reserva cancelada com sucesso!");
     } catch (error) {
-      console.error("Failed to cancel booking:", error);
-    } finally {
-      setIsDeleteLoading(false);
+      console.error(error);
+      toast.error("Erro ao cancelar reserva. Tente novamente.");
     }
+  };
+  const handleSheetOpenChange = (isOpen: boolean) => {
+    setIsSheetOpen(isOpen);
   };
 
   return (
-    <Sheet>
-      <SheetTrigger asChild>
-        <Card className="min-w-full">
-          <CardContent className="flex px-0 py-0">
-            <div className="flex flex-[3] flex-col gap-2 p-5">
-              <Badge variant={variantBadge}>{statusBookgin}</Badge>
-              <h2 className="font-bold">{bookings.service.name}</h2>
+    <Sheet open={isSheetOpen} onOpenChange={handleSheetOpenChange}>
+      <SheetTrigger className="w-full min-w-[90%]">
+        <Card className="min-w-[90%]">
+          <CardContent className="flex justify-between p-0">
+            <div className="flex flex-col gap-2 py-5 pl-5">
+              <Badge
+                className="w-fit"
+                variant={isConfirmed ? "default" : "secondary"}
+              >
+                {isConfirmed ? "Confirmado" : "Finalizado"}
+              </Badge>
+              <h3 className="font-semibold">{booking.service.name}</h3>
 
               <div className="flex items-center gap-2">
-                <Avatar className="size-6">
-                  <AvatarImage src={bookings.barbershop.imageUrl} />
-                  <AvatarFallback>SF</AvatarFallback>
+                <Avatar className="h-6 w-6">
+                  <AvatarImage src={booking.service.barbershop.imageUrl} />
                 </Avatar>
-
-                <h3 className="text-sm">{bookings.barbershop.name}</h3>
+                <p className="text-sm">{booking.service.barbershop.name}</p>
               </div>
             </div>
 
-            <div className="flex flex-1 flex-col items-center justify-center border-l border-solid border-secondary">
+            <div className="flex flex-col items-center justify-center border-l-2 border-solid px-5">
               <p className="text-sm capitalize">
-                {format(bookings.date, "MMMM", { locale: ptBR })}
+                {format(booking.date, "MMMM", { locale: ptBR })}
               </p>
-              <p className="text-2xl">{format(bookings.date, "dd")}</p>
-              <p className="text-sm">{format(bookings.date, "HH:mm")}</p>
+              <p className="text-2xl">
+                {format(booking.date, "dd", { locale: ptBR })}
+              </p>
+              <p className="text-sm">
+                {format(booking.date, "HH:mm", { locale: ptBR })}
+              </p>
             </div>
           </CardContent>
         </Card>
       </SheetTrigger>
-
-      <SheetContent className="px-0">
-        <SheetHeader className="border-b border-solid border-secondary px-5 pb-6 text-left">
-          <SheetTitle>Informações da Reserva</SheetTitle>
+      <SheetContent className="w-[85%]">
+        <SheetHeader>
+          <SheetTitle className="text-left">Informações da Reserva</SheetTitle>
         </SheetHeader>
 
-        <div className="px-5">
-          <div className="relative mt-6 h-[180px] w-full">
-            <Image
-              fill
-              src="/BarberShopCard.png"
-              alt={bookings.barbershop.name}
-            />
+        <div className="relative mt-6 flex h-[180px] w-full items-end">
+          <Image
+            fill
+            className="rounded-xl object-cover"
+            src={booking.service.barbershop.imageUrl}
+            alt={`Mapa da barbearia ${booking.service.barbershop.name}`}
+          />
 
-            <div className="absolute bottom-4 w-full px-5">
-              <Card>
-                <CardContent className="flex gap-2 p-3">
-                  <Avatar>
-                    <AvatarImage src={bookings.barbershop.imageUrl} />
-                  </Avatar>
+          <Card className="z-50 mx-5 mb-3 w-full rounded-xl">
+            <CardContent className="flex items-center gap-3 px-5 py-3">
+              <Avatar>
+                <AvatarImage src={booking.service.barbershop.imageUrl} />
+              </Avatar>
+              <div>
+                <h3 className="font-bold">{booking.service.barbershop.name}</h3>
+                <p className="text-xs">{booking.service.barbershop.address}</p>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
 
-                  <div className="flex flex-col">
-                    <h2 className="font-bold">{bookings.barbershop.name}</h2>
-                    <h3 className="overflow-hidden text-ellipsis text-nowrap text-xs">
-                      {bookings.barbershop.address}
-                    </h3>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-          </div>
-
-          <Badge variant={variantBadge} className="my-3">
-            {statusBookgin}
+        <div className="mt-6">
+          <Badge
+            className="w-fit"
+            variant={isConfirmed ? "default" : "secondary"}
+          >
+            {isConfirmed ? "Confirmado" : "Finalizado"}
           </Badge>
 
-          <BookingInfo booking={bookings} />
+          <div className="mb-3 mt-6">
+            <BookingSummary
+              service={booking.service}
+              selectedDate={booking.date}
+              barbershop={booking.service.barbershop}
+            />
+          </div>
 
-          <SheetFooter className="mt-3 flex flex-row gap-3">
+          <div className="space-y-3">
+            {booking.service.barbershop.phones.map((phone, index) => (
+              <PhoneItem key={index} phone={phone} />
+            ))}
+          </div>
+        </div>
+
+        <SheetFooter className="mt-6">
+          <div className="flex items-center gap-3">
             <SheetClose asChild>
-              <Button className="w-full" variant={"secondary"}>
+              <Button variant="outline" className="w-full">
                 Voltar
               </Button>
             </SheetClose>
-
-            <AlertDialog>
-              <AlertDialogTrigger asChild>
-                <Button
-                  className="w-full"
-                  variant={"destructive"}
-                  disabled={!isBookingConfirmed || isDeleteLoading}
-                >
-                  Cancelar Reserva
-                </Button>
-              </AlertDialogTrigger>
-
-              <AlertDialogContent className="w-[90%]">
-                <AlertDialogHeader>
-                  <AlertDialogTitle>Cancelar Reserva</AlertDialogTitle>
-                  <AlertDialogDescription>
-                    Tem certeza que deseja cancelar esse agendamento?
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter className="flex-row gap-3">
-                  <AlertDialogCancel className="mt-0 w-full">
-                    Voltar
-                  </AlertDialogCancel>
-                  <AlertDialogAction
-                    className="w-full"
-                    disabled={isDeleteLoading}
-                    onClick={handleCancelBooking}
-                  >
-                    {isDeleteLoading && (
-                      <Loader2 className="mr-2 size-4 animate-spin" />
-                    )}
-                    Confirmar
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
-          </SheetFooter>
-        </div>
+            {isConfirmed && (
+              <Dialog>
+                <DialogTrigger className="w-full">
+                  <Button variant="destructive" className="w-full">
+                    Cancelar Reserva
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="w-[90%]">
+                  <DialogHeader>
+                    <DialogTitle>Você deseja cancelar sua reserva?</DialogTitle>
+                    <DialogDescription>
+                      Ao cancelar, você perderá sua reserva e não poderá
+                      recuperá-la. Essa ação é irreversível.
+                    </DialogDescription>
+                  </DialogHeader>
+                  <DialogFooter className="flex flex-row gap-3">
+                    <DialogClose asChild>
+                      <Button variant="secondary" className="w-full">
+                        Voltar
+                      </Button>
+                    </DialogClose>
+                    <DialogClose className="w-full">
+                      <Button
+                        variant="destructive"
+                        onClick={handleCancelBooking}
+                        className="w-full"
+                      >
+                        Confirmar
+                      </Button>
+                    </DialogClose>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
+            )}
+          </div>
+        </SheetFooter>
       </SheetContent>
     </Sheet>
   );
