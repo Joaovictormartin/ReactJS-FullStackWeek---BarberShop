@@ -1,97 +1,110 @@
+"use client";
+
 import Link from "next/link";
-import { signIn, signOut, useSession } from "next-auth/react";
+import Image from "next/image";
+import { signOut, useSession } from "next-auth/react";
+import { CalendarIcon, HomeIcon, LogInIcon, LogOutIcon } from "lucide-react";
 
 import {
-  CalendarIcon,
-  HomeIcon,
-  LogInIcon,
-  LogOutIcon,
-  UserIcon,
-} from "lucide-react";
-import {
+  SheetClose,
   SheetTitle,
   SheetHeader,
   SheetContent,
-} from "@/app/_components/ui/sheet";
+} from "@/_components/ui/sheet";
+import { Button } from "@/_components/ui/button";
+import SignInDialog from "@/_components/sign-in-dialog";
+import { quickSearchOptions } from "@/_constants/search";
+import { Avatar, AvatarImage } from "@/_components/ui/avatar";
+import { Dialog, DialogContent, DialogTrigger } from "@/_components/ui/dialog";
 
-import {
-  Avatar,
-  AvatarImage,
-  AvatarFallback,
-} from "@/app/_components/ui/avatar";
-import { Button } from "@/app/_components/ui/button";
-
-const SideMenu = () => {
+const SidebarSheet = () => {
   const { data } = useSession();
-  const nameUser = data?.user?.name?.split("");
-
-  const handleLoginClick = () => signIn("google");
-
   const handleLogoutClick = () => signOut();
 
   return (
-    <SheetContent className="p-0">
-      <SheetHeader className="border-b border-solid border-secondary p-5 text-left">
-        <SheetTitle>Menu</SheetTitle>
+    <SheetContent className="overflow-y-auto">
+      <SheetHeader>
+        <SheetTitle className="text-left">Menu</SheetTitle>
       </SheetHeader>
 
-      {data?.user ? (
-        <div className="flex items-center justify-between px-5 py-6">
-          <div className="flex items-center gap-3">
+      <div className="flex items-center justify-between gap-3 border-b border-solid py-5">
+        {data?.user ? (
+          <div className="flex items-center gap-2">
             <Avatar>
-              <AvatarImage src={data?.user.image ?? ""} />
-              <AvatarFallback>{nameUser && nameUser[0]}</AvatarFallback>
+              <AvatarImage src={data?.user?.image ?? ""} />
             </Avatar>
 
-            <h2 className="font-bold">{data?.user.name ?? ""}</h2>
+            <div>
+              <p className="font-bold">{data.user.name}</p>
+              <p className="text-xs">{data.user.email}</p>
+            </div>
           </div>
-
-          <Button size={"icon"} variant={"outline"} onClick={handleLogoutClick}>
-            <LogOutIcon size={18} />
-          </Button>
-        </div>
-      ) : (
-        <div className="flex flex-col gap-3 px-5 py-6">
-          <div className="flex items-center gap-2">
-            <UserIcon size={32} />
+        ) : (
+          <>
             <h2 className="font-bold">Olá, faça seu login!</h2>
-          </div>
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button size="icon">
+                  <LogInIcon />
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="w-[90%]">
+                <SignInDialog />
+              </DialogContent>
+            </Dialog>
+          </>
+        )}
+      </div>
 
+      <div className="flex flex-col gap-2 border-b border-solid py-5">
+        <SheetClose asChild>
+          <Button className="justify-start gap-2" variant="ghost" asChild>
+            <Link href="/">
+              <HomeIcon size={18} />
+              Início
+            </Link>
+          </Button>
+        </SheetClose>
+        <Button className="justify-start gap-2" variant="ghost" asChild>
+          <Link href="/bookings">
+            <CalendarIcon size={18} />
+            Agendamentos
+          </Link>
+        </Button>
+      </div>
+
+      <div className="flex flex-col gap-2 border-b border-solid py-5">
+        {quickSearchOptions.map((option) => (
+          <SheetClose key={option.title} asChild>
+            <Button className="justify-start gap-2" variant="ghost" asChild>
+              <Link href={`/barbershops?service=${option.title.toLowerCase()}`}>
+                <Image
+                  width={18}
+                  height={18}
+                  alt={option.title}
+                  src={option.imageUrl}
+                />
+                {option.title}
+              </Link>
+            </Button>
+          </SheetClose>
+        ))}
+      </div>
+
+      {data?.user && (
+        <div className="flex flex-col gap-2 py-5">
           <Button
-            variant={"secondary"}
-            onClick={handleLoginClick}
-            className="w-full justify-start"
+            variant="ghost"
+            onClick={handleLogoutClick}
+            className="justify-start gap-2"
           >
-            <LogInIcon size={18} />
-            Fazer Login
+            <LogOutIcon size={18} />
+            Sair da conta
           </Button>
         </div>
       )}
-
-      <div className="flex flex-col gap-3 px-5">
-        <Button
-          asChild
-          variant={"outline"}
-          className="justify-start"
-          onClick={handleLogoutClick}
-        >
-          <Link href="/">
-            <HomeIcon size={18} />
-            Início
-          </Link>
-        </Button>
-
-        {data?.user && (
-          <Button asChild variant={"outline"} className="justify-start">
-            <Link href="/bookings">
-              <CalendarIcon size={18} />
-              Agendamento
-            </Link>
-          </Button>
-        )}
-      </div>
     </SheetContent>
   );
 };
 
-export default SideMenu;
+export default SidebarSheet;
