@@ -5,9 +5,9 @@ import { Barbershop } from "@prisma/client";
 import { useRouter } from "next/navigation";
 import { ChevronLeftIcon, MapPin, MenuIcon, StarIcon } from "lucide-react";
 
-import SideMenu from "@/app/_components/side-menu";
-import { Button } from "@/app/_components/ui/button";
-import { Sheet, SheetTrigger } from "@/app/_components/ui/sheet";
+import SideMenu from "@/_components/side-menu";
+import { Button } from "@/_components/ui/button";
+import { Sheet, SheetTrigger } from "@/_components/ui/sheet";
 
 interface BarbershopInfoProps {
   barbershop: Barbershop;
